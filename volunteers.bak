@@ -1,0 +1,27 @@
+#lang racket
+
+((define volunteer%
+   (class object%
+     (super-new)
+     (init-field name id nationallity profession languages)
+
+
+ (define/public (getName)
+   send this% name
+   )
+ (define/public (getId)
+   send this% id
+   )
+ (define/public (getNationallity)
+   send this% nationallity
+   )
+ (define/public (getProfession)
+   send this% profession
+   )
+ (define/public (getLanguages)
+   send this% languages
+   )
+     ))
+     
+     
+     
