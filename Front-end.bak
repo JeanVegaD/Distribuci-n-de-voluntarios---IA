@@ -1,0 +1,71 @@
+
+#lang racket/gui
+ (require racket/gui/base)
+
+;Se declara una ventana
+(define frame_principal (new frame%
+                   [label "Distribución de voluntarios"]
+                   [width 1000]
+                   [height 650]))
+(send frame_principal show #t)
+
+
+;Configuracion incial a dos columnas 
+
+(define panel_row (new horizontal-pane%
+                     (parent frame_principal)
+                     ))
+
+
+(define left_column (new vertical-panel%
+                     (parent panel_row)
+                     (vert-margin 5)
+                     (horiz-margin 5)
+                     (min-width 450)
+                     (stretchable-width #f)
+                     ))
+
+
+(define right_column (new vertical-panel%
+                     (parent panel_row)
+                     (vert-margin 5)
+                     (horiz-margin 5)
+                     (min-width 550)
+                     ))
+
+;Columna izquierda
+(define tab-panel (new tab-panel%
+                       (parent left_column)
+                       (choices (list "Voluntarios"
+                                      "Voluntariados"
+                                     ))
+                       ))
+
+
+;columna derecha 
+
+ (define pnl_voluntariosDisponibles (new group-box-panel%
+                             (parent right_column)
+                             (label "Voluntarios disponibles")
+                             ))
+
+ (define pnl_voluntariados_disponibles (new group-box-panel%
+                             (parent right_column)
+                             (label "Voluntariados disponibles")
+                             ))
+
+(define pnl_botones (new panel%
+                             (parent right_column)
+                             (min-height 50)
+                             (stretchable-height #f)
+                             ))
+
+
+(define btn_distribuir_voluntarios (new button%
+                    (parent pnl_botones)
+                    (label "Distribuir voluntarios")
+                    (min-height 50)
+                    (stretchable-height #f)
+                    ))
+
+
