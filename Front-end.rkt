@@ -65,22 +65,44 @@ R:
                         (parent pnl_agregar_voluntarios)
                         (init-value "")))
 
-(define txt_nacionalidad (new text-field%
+(define txt_nacionalidad (new combo-field%
                         (label "Nationality:")
                         (parent pnl_agregar_voluntarios)
+                        (choices (list "Spanish" "English"))
                         (init-value "")))
 
-(define txt_profesion (new text-field%
+(define txt_profesion (new combo-field%
                         (label "Profession: ")
                         (parent pnl_agregar_voluntarios)
+                        (choices (list "Spanish" "English"))
                         (init-value "")))
+
+(define panel_seleccion_lenguajes (new horizontal-panel%
+                     (parent pnl_agregar_voluntarios)
+                     ))
 
 (define combo_languaje (new combo-field%
                          (label "Languages:")
-                         (parent pnl_agregar_voluntarios)
+                         (parent panel_seleccion_lenguajes)
                          
                          (choices (list "Spanish" "English"))
                          (init-value "Spanish")))
+
+(define btn_add_lenguage (new button%
+                    (parent panel_seleccion_lenguajes)
+                    (label "Add")))
+
+
+
+(define list_box_lenguages (new list-box%
+                      (label "")
+                      (parent (new horizontal-panel%
+                                   (parent pnl_agregar_voluntarios)
+                                   (style (list 'border))))
+                      (choices (list "") )
+                      (style (list 'single
+                                   'column-headers))
+                      (columns (list "Languages"))))
 
 (define btn_add_volunteer (new button%
                     (parent pnl_agregar_voluntarios)
@@ -161,13 +183,14 @@ R:
                       (parent (new horizontal-panel%
                                    (parent pnl_voluntarios_disponibles)
                                    (style (list 'border))))
-                      (choices (list "Item 0"
-                                     "Item 1"
-                                     "Item 2") )
+                      (choices (list ) )
                       (style (list 'single
                                    'column-headers))
                       (columns (list  "Name" "Id" "Nationality" "Profession" "Languages"))))
 
+
+(send list_box_volunteers append "hola" 2)
+;;(send list_box_volunteers set-string 1 "holaMundo" 2 )
 
 (define list_box_places (new list-box%
                       (label "")

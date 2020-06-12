@@ -1,0 +1,26 @@
+{
+  "voluntarios": [
+    {
+      "nombre": "Nombre de la persona 1",
+      "id": "Identificador A",
+      "nacionalidad": "País de procedencia",
+      "profesion": "Profesión que desempeña",
+      "idiomas": [
+        "inglés",
+        "español",
+        "portugués"
+      ]
+    },
+    {
+      "nombre": "Nombre de la persona 2",
+      "id": "Identificador B",
+      "nacionalidad": "País de procedencia",
+      "profesion": "Profesión que desempeña",
+      "idiomas": [
+        "francés",
+        "portugués"
+      ],
+      "otroparametro": "Valor asignado (Opcionales)"
+    }
+  ]
+}
