@@ -46,7 +46,15 @@ R: los atributos deben ser los objetos respectivos
 (define %teams
   (class object%
     (super-new)
-    (init-field place volunteer)
+    (init-field place volunteers)
+
+    #|
+    E: un nuevo voluntario
+    S: lista de los voluntarios en el equipo actualizada
+    R: 
+    |#
+    (define/public (addVolunteer volunteer)
+       (set! volunteers (append volunteers (list volunteer))))
 ))
 
 
