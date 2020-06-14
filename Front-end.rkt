@@ -1,13 +1,34 @@
 
 #lang racket/gui
- (require racket/gui/base)
+(require racket/gui/base)
+(require json)
+
+
+
+
+;funciones generales del programa
 
 #|
-E:
-S:
-R:
+E: Path de un archivo
+S: Lista con la informacion contenida del archivo
+R: El formato de la estructura del json debe ser simple 
 |#
+( define (readFile path)
+         (with-input-from-file path
+           (lambda()
+            (define lista (file->string path))
+           (with-input-from-string
+               lista
+             (λ () (read-json)))
+             )
+     )
+)
 
+
+
+#|
+UI:frame principal 
+|#
 (define frame_principal (new frame%
                    [label "Distribución de voluntarios"]
                    [width 1000]
@@ -15,13 +36,17 @@ R:
 (send frame_principal show #t)
 
 
-;Configuracion incial a dos columnas 
-
+#|
+UI:divide el frame principal en 2 de forma horizontal
+|# 
 (define panel_row (new horizontal-pane%
                      (parent frame_principal)
                      ))
 
 
+#|
+UI:panel vertical en el lado izquierdo donde se manejan los controles
+|#
 (define left_column (new vertical-panel%
                      (parent panel_row)
                      (vert-margin 5)
@@ -30,7 +55,9 @@ R:
                      (stretchable-width #f)
                      ))
 
-
+#|
+UI: panel derecho donde se visualiza la informacion
+|#
 (define right_column (new vertical-panel%
                      (parent panel_row)
                      (vert-margin 5)
@@ -38,13 +65,17 @@ R:
                      (min-width 550)
                      ))
 
-;Columna izquierda
+#|
+UI:Panel especifico de voluntarios
+|#
  (define pnl_agregar_voluntarios (new group-box-panel%
                              (parent left_column)
                              (label "Volunteers")
                              (spacing 5)
                              ))
-
+#|
+UI:Panel especifico de lugares
+|#
  (define pnl_agregar_lugares (new group-box-panel%
                              (parent left_column)
                              (label "Places")
@@ -53,65 +84,173 @@ R:
 
 
 
-;voluntarios
+#|
+UI: campo de texto nombre del voluntarios
+|#
 (define txt_nombre (new text-field%
                         (label "Name:         ")
                         (parent pnl_agregar_voluntarios)
                         (init-value "")
                         ))
-
+#|
+UI: campo de texto identificador del voluntario
+|#
 (define txt_id (new text-field%
                         (label "Id:                ")
                         (parent pnl_agregar_voluntarios)
                         (init-value "")))
 
+#|
+UI: combobox de nacionalidad de voluntarios
+|#
 (define txt_nacionalidad (new combo-field%
                         (label "Nationality:")
                         (parent pnl_agregar_voluntarios)
-                        (choices (list "Spanish" "English"))
-                        (init-value "")))
+                        (choices (list "afghan"))
+                        (init-value "afghan")))
 
+
+#|
+E: obtiene la informacion del json
+S: Carga el combobox de nacionalidades
+R: No posee
+|#
+(define lista_nacionalidades (readFile "JSON//nationalities.json"))
+(map (lambda (nacionality)
+         (send txt_nacionalidad append nacionality))
+       lista_nacionalidades)
+
+
+
+#|
+UI: combobox de profesiones 
+|#
 (define txt_profesion (new combo-field%
                         (label "Profession: ")
                         (parent pnl_agregar_voluntarios)
-                        (choices (list "Spanish" "English"))
-                        (init-value "")))
+                        (choices (list "accountant"))
+                        (init-value "accountant")))
 
+#|
+E: obtiene la informacion del json
+S: Carga el combobox de profesiones
+R: No posee
+|#
+(define lista_profesiones (readFile "JSON//occupations.json"))
+(map (lambda (occupation)
+         (send txt_profesion append occupation))
+       lista_profesiones)
+
+
+#|
+UI: panel con informacion de los lenguajes 
+|#
 (define panel_seleccion_lenguajes (new horizontal-panel%
                      (parent pnl_agregar_voluntarios)
                      ))
 
+
+#|
+UI: combobox de lenguajes 
+|#
 (define combo_languaje (new combo-field%
                          (label "Languages:")
                          (parent panel_seleccion_lenguajes)
                          
-                         (choices (list "Spanish" "English"))
-                         (init-value "Spanish")))
+                         (choices (list "abkhaz"))
+                         (init-value "abkhaz")))
 
+
+#|
+UI: boton de agregar lenguajes  
+|#
 (define btn_add_lenguage (new button%
                     (parent panel_seleccion_lenguajes)
-                    (label "Add")))
+                    (label "Add")
+                    (callback (lambda (b e)(add_language_list)))
+                    ))
 
 
+
+#|
+E: Campo de valor en el combobox
+S: Agregar al listbox el valor obtenido
+R: No posee
+|#
+(define (add_language_list)
+  (send list_box_lenguages append (send combo_languaje get-value)))
+
+
+#|
+UI: list box de lenguajes  
+|#
 
 (define list_box_lenguages (new list-box%
                       (label "")
                       (parent (new horizontal-panel%
                                    (parent pnl_agregar_voluntarios)
                                    (style (list 'border))))
-                      (choices (list "") )
+                      (choices (list "sa") )
                       (style (list 'single
                                    'column-headers))
                       (columns (list "Languages"))))
 
+(send list_box_lenguages delete 0)
+
+
+
+#|
+UI: boton de agregar voluntarios 
+|#
 (define btn_add_volunteer (new button%
                     (parent pnl_agregar_voluntarios)
                     (label "Add volunteers")
                     (min-height 35)
                     (stretchable-height #f)
                     (stretchable-width #t)
+                    (callback (lambda (b e)(add_volunteer_to_list)))
                     ))
 
+
+#|
+E: Campos acerca de los lugares
+S: Agrega un nuevo voluntario a la lista 
+R: No posee
+|#
+(define (add_volunteer_to_list)
+  ;variables
+  (define var_nombre (send txt_nombre get-value))
+  (define var_identificacionr (send txt_id get-value))
+  (define var_nacionalidad (send txt_nacionalidad get-value))
+  (define var_profesion (send txt_profesion get-value))
+ 
+  
+  ;condiciones
+  (define rest1 (not(equal? var_nombre "")))
+  (define rest2 (not(equal? var_identificacionr "")))
+  (define rest3 (not(equal? var_nacionalidad "")))
+  (define rest4 (not(equal? var_profesion "")))
+
+  
+  (define (add_volunteers_to_list_aux)  
+    (send list_box_volunteers append "")
+    (define index (- (send list_box_volunteers get-number) 1))
+    (send list_box_volunteers set-string index var_nombre 0)
+    (send list_box_volunteers set-string index var_identificacionr 1)
+    (send list_box_volunteers set-string index var_nacionalidad 2)
+    (send list_box_volunteers set-string index var_profesion 3)
+  )
+
+  
+  
+  ;(if (and rest1 rest2 rest3 rest4)(add_volunteers_to_list_aux) (error "complete all fields")) 
+)
+
+
+
+#|
+UI: boton para cargar desde un json 
+|#
 (define btn_load_volunteer  (new button%
                     (parent pnl_agregar_voluntarios)
                     (label "Load volunteers from JSON")
@@ -120,55 +259,122 @@ R:
                     (stretchable-width #t)
                     ))
 
-;Lugares
 
+
+#|
+UI: campo de texto del nombre del lugar 
+|#
 (define txt_nombre_lugar (new text-field%
                         (label "Name:          ")
                         (parent pnl_agregar_lugares)
                         (init-value "")
                         ))
 
+#|
+UI: campo de texto del descripcion del lugar 
+|#
 (define txt_descripcion_lugar (new text-field%
                         (label "Description: ")
                         (parent pnl_agregar_lugares)
                         (init-value "")))
 
+
+#|
+UI: combobox con la infromacion de lenguajes
+|#
 (define combo_languaje_lugares (new combo-field%
                          (label "Languages:  ")
                          (parent pnl_agregar_lugares)
                          
-                         (choices (list "Spanish" "English"))
-                         (init-value "Spanish")))
+                         (choices (list "abkhaz"))
+                         (init-value "abkhaz")))
 
+
+#|
+E: obtiene la informacion del json
+S: Carga el combobox de nacionalidades
+R: No posee
+|#
+(define lista_lenguajes (readFile "JSON//languages.json"))
+(map (lambda (language)
+         (send combo_languaje_lugares append language)
+       (send combo_languaje append language))
+       lista_lenguajes)
+
+
+
+#|
+UI: boton de agregar un lugar nuevo
+|#
 (define btn_add_place (new button%
                     (parent pnl_agregar_lugares)
                     (label "Add place")
                     (min-height 35)
                     (stretchable-height #f)
                     (stretchable-width #t)
+                    (callback (lambda (b e)(add_place_to_list)))
                     ))
 
 
+#|
+E: Campos acerca de los lugares
+S: Crear un nuevo lugar en donde distribuir los voluntarios
+R: No posee
+|#
+(define (add_place_to_list)
+  ;variables
+  (define var_nombre_lugar (send txt_nombre_lugar get-value))
+  (define var_descripcion_lugar (send txt_descripcion_lugar get-value))
+  (define var_lenguaje_lugar (send combo_languaje_lugares get-value))
+  
+  ;condiciones
+  (define rest1 (not(equal? var_nombre_lugar "")))
+  (define rest2 (not(equal? var_descripcion_lugar "")))
+  (define rest3 (not(equal? var_lenguaje_lugar "")))
 
-;columna derecha 
 
+  (define (add_place_to_list_aux)  
+    (send list_box_places append "")
+    (define index (- (send list_box_places get-number) 1))
+    (send list_box_places set-string index var_nombre_lugar 0)
+    (send list_box_places set-string index var_descripcion_lugar 1)
+    (send list_box_places set-string index var_lenguaje_lugar 2)
+  )
+
+  
+  (if (and rest1 rest2 rest3)(add_place_to_list_aux) (error "complete all fields")) 
+)
+
+
+
+
+#|
+UI: panel especifico para visualizar voluntarios
+|#
  (define pnl_voluntarios_disponibles (new group-box-panel%
                              (parent right_column)
                              (label "Available volunteers")
                              ))
-
+#|
+UI: panel especifico para visualizar lugares
+|#
  (define pnl_voluntariados_disponibles (new group-box-panel%
                              (parent right_column)
                              (label "Available places")
                              ))
 
+#|
+UI: panel especifico para los botones 
+|#
 (define pnl_botones (new panel%
                              (parent right_column)
                              (min-height 50)
                              (stretchable-height #f)
                              ))
 
-
+#|
+UI: boton para distirbuir los voluntarios
+|#
 (define btn_distribuir_voluntarios (new button%
                     (parent pnl_botones)
                     (label "Distribute volunteers")
@@ -177,7 +383,9 @@ R:
                     (stretchable-width #t)
                     ))
 
-
+#|
+UI: listbox para visualizar voluntarios 
+|#
 (define list_box_volunteers (new list-box%
                       (label "")
                       (parent (new horizontal-panel%
@@ -188,18 +396,22 @@ R:
                                    'column-headers))
                       (columns (list  "Name" "Id" "Nationality" "Profession" "Languages"))))
 
-
-(send list_box_volunteers append "hola" 2)
-;;(send list_box_volunteers set-string 1 "holaMundo" 2 )
-
+#|
+UI: listbox para visualizar lugares
+|#
 (define list_box_places (new list-box%
                       (label "")
                       (parent (new horizontal-panel%
                                    (parent pnl_voluntariados_disponibles)
                                    (style (list 'border))))
-                      (choices (list "Item 0"
-                                     "Item 1"
-                                     "Item 2"))
+                      (choices (list ))
                       (style (list 'single
                                    'column-headers))
                       (columns (list  "Name" "Description" "Languages"))))
+
+
+
+
+
+
+

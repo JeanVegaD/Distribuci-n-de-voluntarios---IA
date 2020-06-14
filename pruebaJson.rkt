@@ -16,5 +16,15 @@
 
 
 ;(readFile "C:\\Users\\Samuel\\Desktop\\IA\\Proyecto 1\\Example.json")
-(define variable (readFile "JSON//EXAMPLE.json"))
+(define variable (readFile "JSON//languages.json"))
+
+
+(define subList (hash-values variable))
+
+
+;variable
+
+(hash-iterate-value variable 2)
+;(hash-ref-key variable ".af" )
+
 
