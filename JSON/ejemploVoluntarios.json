@@ -1,0 +1,23 @@
+[
+  {
+  	"name": "Jean Vega Díaz",
+  	"id": "123456789",
+  	"nationality": "american",
+  	"profession": "engineer",
+  	"language": [ "french","japanese"]
+  },
+  {
+  	"name": "Joss Johnson",
+  	"id": "123456789",
+  	"nationality": "canadian",
+  	"profession": "engineer",
+  	"language": [ "french","english"]
+  }
+  ,{
+  	"name": "Cristofer Vaciana",
+  	"id": "123456789",
+  	"nationality": "costa rican",
+  	"profession": "engineer",
+  	"language": [ "spanish"]
+  }
+]

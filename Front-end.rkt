@@ -6,6 +6,7 @@
 
 
 
+
 ;funciones generales del programa
 
 #|
@@ -170,8 +171,6 @@ UI: boton de agregar lenguajes
                     (callback (lambda (b e)(add_language_list)))
                     ))
 
-
-
 #|
 E: Campo de valor en el combobox
 S: Agregar al listbox el valor obtenido
@@ -219,17 +218,29 @@ R: No posee
 |#
 (define (add_volunteer_to_list)
   ;variables
+  
   (define var_nombre (send txt_nombre get-value))
   (define var_identificacionr (send txt_id get-value))
   (define var_nacionalidad (send txt_nacionalidad get-value))
   (define var_profesion (send txt_profesion get-value))
- 
+
+  (define var_idiomas "")
+  (define list (build-list (send list_box_lenguages get-number) values))
+  (for ([i list])
+    (set! var_idiomas (string-append var_idiomas (send list_box_lenguages get-string i)))
+    (set! var_idiomas (string-append var_idiomas " , "))
+    )
+
+
+
+  
   
   ;condiciones
   (define rest1 (not(equal? var_nombre "")))
   (define rest2 (not(equal? var_identificacionr "")))
   (define rest3 (not(equal? var_nacionalidad "")))
   (define rest4 (not(equal? var_profesion "")))
+  (define rest5 (not(equal? var_idiomas "")))
 
   
   (define (add_volunteers_to_list_aux)  
@@ -239,11 +250,10 @@ R: No posee
     (send list_box_volunteers set-string index var_identificacionr 1)
     (send list_box_volunteers set-string index var_nacionalidad 2)
     (send list_box_volunteers set-string index var_profesion 3)
+    (send list_box_volunteers set-string index var_idiomas 4)
   )
-
   
-  
-  ;(if (and rest1 rest2 rest3 rest4)(add_volunteers_to_list_aux) (error "complete all fields")) 
+  (if (and rest1 rest2 rest3 rest4 rest5)(add_volunteers_to_list_aux) (error "complete all fields")) 
 )
 
 
@@ -257,8 +267,40 @@ UI: boton para cargar desde un json
                     (min-height 35)
                     (stretchable-height #f)
                     (stretchable-width #t)
+                    (callback (lambda (b e)(load_from_json)))
                     ))
 
+(define (load_from_json)
+
+(define path (get-file))
+(define path_string (path->string path) )
+(define list_hash (readFile path_string))
+
+(for ([sub_hash list_hash])
+
+     (define var_nombre (hash-iterate-value sub_hash 4))
+     (define var_identificacionr (hash-iterate-value sub_hash 3))
+     (define var_nacionalidad (hash-iterate-value sub_hash 1))
+     (define var_profesion (hash-iterate-value sub_hash 0))
+     (define var_idiomas "")
+     (for ([lan (hash-iterate-value sub_hash 2)])
+       (set! var_idiomas (string-append var_idiomas " , "))
+       (set! var_idiomas (string-append var_idiomas lan))
+      
+    )
+
+    (set! var_idiomas (substring var_idiomas 3))
+
+    (send list_box_volunteers append "")
+    (define index (- (send list_box_volunteers get-number) 1))
+    (send list_box_volunteers set-string index var_nombre 0)
+    (send list_box_volunteers set-string index var_identificacionr 1)
+    (send list_box_volunteers set-string index var_nacionalidad 2)
+    (send list_box_volunteers set-string index var_profesion 3)
+    (send list_box_volunteers set-string index var_idiomas 4)
+
+    )
+)
 
 
 #|
@@ -278,16 +320,59 @@ UI: campo de texto del descripcion del lugar
                         (parent pnl_agregar_lugares)
                         (init-value "")))
 
+#|
+UI: panel con informacion de los lenguajes 
+|#
+(define panel_seleccion_lenguajes_lugares (new horizontal-panel%
+                     (parent pnl_agregar_lugares)
+                     ))
+
+
 
 #|
 UI: combobox con la infromacion de lenguajes
 |#
 (define combo_languaje_lugares (new combo-field%
                          (label "Languages:  ")
-                         (parent pnl_agregar_lugares)
+                         (parent panel_seleccion_lenguajes_lugares)
                          
                          (choices (list "abkhaz"))
                          (init-value "abkhaz")))
+
+
+#|
+UI: boton de agregar lenguajes  
+|#
+(define btn_add_lenguage_places (new button%
+                    (parent panel_seleccion_lenguajes_lugares)
+                    (label "Add")
+                    (callback (lambda (b e)(add_language_list_places)))
+                    ))
+
+#|
+E: Campo de valor en el combobox
+S: Agregar al listbox el valor obtenido
+R: No posee
+|#
+(define (add_language_list_places)
+  (send list_box_lenguages_places append (send combo_languaje_lugares get-value)))
+
+
+#|
+UI: list box de lenguajes de los lugares 
+|#
+
+(define list_box_lenguages_places (new list-box%
+                      (label "")
+                      (parent (new horizontal-panel%
+                                   (parent pnl_agregar_lugares)
+                                   (style (list 'border))))
+                      (choices (list "sa") )
+                      (style (list 'single
+                                   'column-headers))
+                      (columns (list "Languages"))))
+
+(send list_box_lenguages_places delete 0)
 
 
 #|
@@ -325,12 +410,20 @@ R: No posee
   ;variables
   (define var_nombre_lugar (send txt_nombre_lugar get-value))
   (define var_descripcion_lugar (send txt_descripcion_lugar get-value))
-  (define var_lenguaje_lugar (send combo_languaje_lugares get-value))
+  
+  (define var_idiomas "")
+  (define list (build-list (send list_box_lenguages_places get-number) values))
+  (for ([i list])
+    (set! var_idiomas (string-append var_idiomas " , "))
+    (set! var_idiomas (string-append var_idiomas (send list_box_lenguages_places get-string i)))
+    
+    )
+  (set! var_idiomas (substring var_idiomas 3))
   
   ;condiciones
   (define rest1 (not(equal? var_nombre_lugar "")))
   (define rest2 (not(equal? var_descripcion_lugar "")))
-  (define rest3 (not(equal? var_lenguaje_lugar "")))
+  (define rest3 (not(equal? var_idiomas "")))
 
 
   (define (add_place_to_list_aux)  
@@ -338,11 +431,16 @@ R: No posee
     (define index (- (send list_box_places get-number) 1))
     (send list_box_places set-string index var_nombre_lugar 0)
     (send list_box_places set-string index var_descripcion_lugar 1)
-    (send list_box_places set-string index var_lenguaje_lugar 2)
+    (send list_box_places set-string index var_idiomas 2)
   )
 
   
-  (if (and rest1 rest2 rest3)(add_place_to_list_aux) (error "complete all fields")) 
+  (if (and rest1 rest2 rest3)(add_place_to_list_aux) 
+  (message-box "Error" 	
+ 	 	"complete all fields"	 
+ 	 	frame_principal	 
+ 	))	 
+
 )
 
 
