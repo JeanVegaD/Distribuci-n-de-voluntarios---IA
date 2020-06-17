@@ -1,0 +1,17 @@
+[
+  {
+  	"name": "Japan",
+  	"description": "Description of place 1",
+  	"language": [ "french","japanese"]
+  },
+  {
+  	"name": "France",
+  	"description": "Description of place 2",
+  	"language": [ "french","english"]
+  }
+  ,{
+  	"name": "Costa Rica",
+	"description": "Description of place 3",
+  	"language": [ "spanish"]
+  }
+]

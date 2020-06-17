@@ -2,23 +2,39 @@
 (require json)
 (require racket/gui/base)
 
-( define (readFile path)
-         (with-input-from-file path
-           (lambda()
-            (define lista (file->string path))
-           (with-input-from-string
-               lista
-             (λ () (read-json)))
-             ;;(display lista)
-             )
-           
-   
+
+(define (readFile path)
+  (with-input-from-file path
+    (lambda() 
+      (define lista (file->string path))
+      (with-input-from-string lista
+        (lambda()
+          (read-json)
+         )
+       )
      )
+   )
 )
 
 
+(readFile "JSON//places_template.json")
+
+
+
+#|
+(with-handlers ([string? (lambda (n)
+                             (display n))])
+
+|#
+
 ;(readFile "C:\\Users\\Samuel\\Desktop\\IA\\Proyecto 1\\Example.json")
-;(define variable (readFile "JSON//ejemploVoluntarios.json"))
+;
+;variable
+
+#|
+
+
+
 
 (define (load_from_json)
 
@@ -43,5 +59,5 @@
 ;(hash-ref-key variable ".af" )
 
 
-
+|#
 

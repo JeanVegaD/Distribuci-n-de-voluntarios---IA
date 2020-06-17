@@ -16,9 +16,9 @@ R: El formato de la estructura del json debe ser simple
 |#
 ( define (readFile path)
          (with-input-from-file path
-           (lambda()
-            (define lista (file->string path))
-           (with-input-from-string
+            (lambda()
+              (define lista (file->string path))
+              (with-input-from-string
                lista
              (λ () (read-json)))
              )
@@ -31,10 +31,11 @@ R: El formato de la estructura del json debe ser simple
 UI:frame principal 
 |#
 (define frame_principal (new frame%
-                   [label "Distribución de voluntarios"]
+                   [label "Volunteer distribution"]
                    [width 1000]
                    [height 650]))
-(send frame_principal show #t)
+
+(send frame_principal show #f)
 
 
 #|
@@ -155,7 +156,7 @@ UI: panel con informacion de los lenguajes
 UI: combobox de lenguajes 
 |#
 (define combo_languaje (new combo-field%
-                         (label "Languages:")
+                         (label "Language:")
                          (parent panel_seleccion_lenguajes)
                          
                          (choices (list "abkhaz"))
@@ -267,10 +268,10 @@ UI: boton para cargar desde un json
                     (min-height 35)
                     (stretchable-height #f)
                     (stretchable-width #t)
-                    (callback (lambda (b e)(load_from_json)))
+                    (callback (lambda (b e)(load_volunteers_from_json)))
                     ))
 
-(define (load_from_json)
+(define (load_volunteers_from_json)
 
 (define path (get-file))
 (define path_string (path->string path) )
@@ -333,7 +334,7 @@ UI: panel con informacion de los lenguajes
 UI: combobox con la infromacion de lenguajes
 |#
 (define combo_languaje_lugares (new combo-field%
-                         (label "Languages:  ")
+                         (label "Language:  ")
                          (parent panel_seleccion_lenguajes_lugares)
                          
                          (choices (list "abkhaz"))
@@ -348,6 +349,8 @@ UI: boton de agregar lenguajes
                     (label "Add")
                     (callback (lambda (b e)(add_language_list_places)))
                     ))
+
+
 
 #|
 E: Campo de valor en el combobox
@@ -443,6 +446,45 @@ R: No posee
 
 )
 
+#|
+UI: boton de agregar conjunto de lugares a traves de un JSON
+|#
+(define btn_load_places (new button%
+                    (parent pnl_agregar_lugares)
+                    (label "Load places from JSON")
+                    (min-height 35)
+                    (stretchable-height #f)
+                    (stretchable-width #t)
+                    (callback (lambda (b e)(load_places_from_json)))
+                    ))
+
+(define (load_places_from_json)
+
+  (define path (get-file))
+  (define path_string (path->string path) )
+  (define list_hash (readFile path_string))
+
+  (for ([sub_hash list_hash])
+    
+    (define var_description (hash-iterate-value sub_hash 0))
+    (define var_name (hash-iterate-value sub_hash 2))
+    (define var_lang "")
+    (for ([lan (hash-iterate-value sub_hash 1)])
+       (set! var_lang (string-append var_lang " , "))
+       (set! var_lang (string-append var_lang lan))
+    )
+    (set! var_lang (substring var_lang 3))
+
+    (send list_box_places append "")
+    (define index (- (send list_box_places get-number) 1))
+    (send list_box_places set-string index var_name 0)
+    (send list_box_places set-string index var_description 1)
+    (send list_box_places set-string index var_lang 2)
+   
+    )
+)
+
+
 
 
 
@@ -509,7 +551,106 @@ UI: listbox para visualizar lugares
 
 
 
+#|
+UI:frame distribucion
+|#
+(define frame_distirbucion (new frame%
+                   [label "distribution results"]
+                   [width 800]
+                   [height 600]))
+
+(send frame_distirbucion show #t)
+
+#|
+UI:panel vertical que muestra los voluntarios
+|#
+(define panel_visual_team (new horizontal-panel%
+                     (parent frame_distirbucion)
+                     (vert-margin 2)
+                     ;(horiz-margin 5)
+                     ;(min-width 450)
+                     ;(stretchable-width #f)
+                     ))
+
+#|
+UI: panel ogranizador de widgetes poscionado a la izquierda
+|#
+(define left_panel_dist (new horizontal-panel%
+                     (parent panel_visual_team)
+                     (vert-margin 5)
+                     ;(horiz-margin 5)
+                     ;(min-width 450)
+                     ;(stretchable-width #f)
+                     ))
+
+
+#|
+UI: panel especifico para visualizar los equipos 
+|#
+ (define pnl_teams (new group-box-panel%
+                             (parent left_panel_dist)
+                             (label "Teams")
+                             ))
+
+#|
+UI: listbox para visualizar voluntarios 
+|#
+(define list_box_teams (new list-box%
+                      (label "")
+                      (parent (new horizontal-panel%
+                                   (parent pnl_teams)
+                                   (style (list 'border))))
+                      (choices (list ) )
+                      (style (list 'single
+                                   'column-headers))
+                      (columns (list  "Name" "Place" "Description" "Languages"))))
 
 
 
 
+(define rigth_panel_dist (new horizontal-panel%
+                     (parent panel_visual_team)
+                     (vert-margin 5)
+                     ;(horiz-margin 5)
+                     ;(min-width 450)
+                     ;(stretchable-width #f)
+                     ))
+
+
+
+
+#|
+UI: panel especifico para visualizar los miembros del equipos 
+|#
+ (define pnl_teams_members (new group-box-panel%
+                             (parent rigth_panel_dist)
+                             (label "Teams members")
+                             ))
+
+(define list_teams_members (new list-box%
+                      (label "")
+                      (parent (new horizontal-panel%
+                                   (parent rigth_panel_dist)
+                                   (style (list 'border))))
+                      (choices (list ) )
+                      (style (list 'single
+                                   'column-headers))
+                      (columns (list  "Name" "Id" "Nationality" "Profession" "Languages"))))
+
+
+
+(define panel_visual_voluuntrer (new horizontal-panel%
+                     (parent frame_distirbucion)
+                     (vert-margin 2)
+                     ;(horiz-margin 5)
+                     ;(min-width 450)
+                     ;(stretchable-width #f)
+                     ))
+
+#|
+UI: panel especifico para visualizar los voluntartios sin equipos
+|#
+ (define pnl_volunteers_without_team (new group-box-panel%
+                             (parent panel_visual_voluuntrer)
+                             (label "Volunteers without team")
+                             ))
