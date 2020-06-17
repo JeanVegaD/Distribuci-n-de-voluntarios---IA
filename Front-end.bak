@@ -2,7 +2,9 @@
 #lang racket/gui
 (require racket/gui/base)
 (require json)
-(require "back-end.rkt")
+
+
+
 
 
 ;funciones generales del programa
@@ -33,7 +35,7 @@ UI:frame principal
                    [width 1000]
                    [height 650]))
 
-(send frame_principal show #t)
+(send frame_principal show #f)
 
 
 #|
@@ -154,7 +156,7 @@ UI: panel con informacion de los lenguajes
 UI: combobox de lenguajes 
 |#
 (define combo_languaje (new combo-field%
-                         (label "Language: ")
+                         (label "Language:")
                          (parent panel_seleccion_lenguajes)
                          
                          (choices (list "abkhaz"))
@@ -224,14 +226,13 @@ R: No posee
   (define var_profesion (send txt_profesion get-value))
 
   (define var_idiomas "")
-  (define var_lista_idiomas '())
-  
   (define list (build-list (send list_box_lenguages get-number) values))
   (for ([i list])
-    (set! var_lista_idiomas (append (send list_box_lenguages get-string i) var_lista_idiomas))
     (set! var_idiomas (string-append var_idiomas (send list_box_lenguages get-string i)))
     (set! var_idiomas (string-append var_idiomas " , "))
     )
+
+
 
   
   
@@ -243,9 +244,7 @@ R: No posee
   (define rest5 (not(equal? var_idiomas "")))
 
   
-  (define (add_volunteers_to_list_aux)
-    (define v1 (new volunteer% [name var_nombre] [id var_identificacionr] [nationality var_nacionalidad] [profession var_profesion] [languages var_lista_idiomas]))
-    (addVolunteer v1)
+  (define (add_volunteers_to_list_aux)  
     (send list_box_volunteers append "")
     (define index (- (send list_box_volunteers get-number) 1))
     (send list_box_volunteers set-string index var_nombre 0)
@@ -253,13 +252,9 @@ R: No posee
     (send list_box_volunteers set-string index var_nacionalidad 2)
     (send list_box_volunteers set-string index var_profesion 3)
     (send list_box_volunteers set-string index var_idiomas 4)
-    
   )
   
-  (if (and rest1 rest2 rest3 rest4 rest5)(add_volunteers_to_list_aux) (message-box "Error" 	
- 	 	"Complete all fields"	 
- 	 	frame_principal	 
- 	)) 
+  (if (and rest1 rest2 rest3 rest4 rest5)(add_volunteers_to_list_aux) (error "complete all fields")) 
 )
 
 
@@ -295,12 +290,8 @@ UI: boton para cargar desde un json
       
     )
 
-    ;se agrega a la clase
-    (define v1 (new volunteer% [name var_nombre] [id var_identificacionr] [nationality var_nacionalidad] [profession var_profesion] [languages (hash-iterate-value sub_hash 2)]))
-    (addVolunteer v1)
-    ;se muestra en pantalla 
-
     (set! var_idiomas (substring var_idiomas 3))
+
     (send list_box_volunteers append "")
     (define index (- (send list_box_volunteers get-number) 1))
     (send list_box_volunteers set-string index var_nombre 0)
@@ -343,7 +334,7 @@ UI: panel con informacion de los lenguajes
 UI: combobox con la infromacion de lenguajes
 |#
 (define combo_languaje_lugares (new combo-field%
-                         (label "Language:   ")
+                         (label "Language:  ")
                          (parent panel_seleccion_lenguajes_lugares)
                          
                          (choices (list "abkhaz"))
@@ -373,6 +364,7 @@ R: No posee
 #|
 UI: list box de lenguajes de los lugares 
 |#
+
 (define list_box_lenguages_places (new list-box%
                       (label "")
                       (parent (new horizontal-panel%
@@ -423,15 +415,13 @@ R: No posee
   (define var_descripcion_lugar (send txt_descripcion_lugar get-value))
   
   (define var_idiomas "")
-  (define var_list_idiomas '())
   (define list (build-list (send list_box_lenguages_places get-number) values))
   (for ([i list])
-    (set! var_list_idiomas (append (send list_box_lenguages_places get-string i) var_list_idiomas))
     (set! var_idiomas (string-append var_idiomas " , "))
     (set! var_idiomas (string-append var_idiomas (send list_box_lenguages_places get-string i)))
     
     )
-  
+  (set! var_idiomas (substring var_idiomas 3))
   
   ;condiciones
   (define rest1 (not(equal? var_nombre_lugar "")))
@@ -439,11 +429,8 @@ R: No posee
   (define rest3 (not(equal? var_idiomas "")))
 
 
-  (define (add_place_to_list_aux)
-    (define p1 (new places% [name var_nombre_lugar] [description var_descripcion_lugar] [languages var_list_idiomas]))
-    (addPlace p1 )
+  (define (add_place_to_list_aux)  
     (send list_box_places append "")
-    (set! var_idiomas (substring var_idiomas 3))
     (define index (- (send list_box_places get-number) 1))
     (send list_box_places set-string index var_nombre_lugar 0)
     (send list_box_places set-string index var_descripcion_lugar 1)
@@ -453,7 +440,7 @@ R: No posee
   
   (if (and rest1 rest2 rest3)(add_place_to_list_aux) 
   (message-box "Error" 	
- 	 	"Complete all fields"	 
+ 	 	"complete all fields"	 
  	 	frame_principal	 
  	))	 
 
@@ -488,10 +475,6 @@ UI: boton de agregar conjunto de lugares a traves de un JSON
     )
     (set! var_lang (substring var_lang 3))
 
-    ;se agrega el objeto
-    (define p1 (new places% [name var_name] [description var_description] [languages (hash-iterate-value sub_hash 1)]))
-    (addPlace p1)
-    ;se agrega a la interfaz
     (send list_box_places append "")
     (define index (- (send list_box_places get-number) 1))
     (send list_box_places set-string index var_name 0)
@@ -538,29 +521,7 @@ UI: boton para distirbuir los voluntarios
                     (min-height 50)
                     (stretchable-height #f)
                     (stretchable-width #t)
-                    (callback (lambda (b e)(distribuir_voluntarios)))
                     ))
-
-
-(define (distribuir_voluntarios)
-
-  (define rest1 (> (send list_box_places get-number) 0))
-  (define rest2 (> (send list_box_volunteers get-number) 0))
-
-  (define (distribuir_voluntarios_aux)
-    (searchTranslators)
-    (addTranslator)
-    (group)
-   )
-
-  (if (and rest1 rest2)(distribuir_voluntarios_aux)
-      (message-box "Error" 	
- 	 	"Complete all fields"	 
- 	 	frame_principal	 
- 	))
-)
-
-
 
 #|
 UI: listbox para visualizar voluntarios 
@@ -590,17 +551,6 @@ UI: listbox para visualizar lugares
 
 
 
-
-
-
-;============================================================================================00
-
-
-
-
-
-
-
 #|
 UI:frame distribucion
 |#
@@ -609,7 +559,7 @@ UI:frame distribucion
                    [width 800]
                    [height 600]))
 
-(send frame_distirbucion show #f)
+(send frame_distirbucion show #t)
 
 #|
 UI:panel vertical que muestra los voluntarios
@@ -677,10 +627,10 @@ UI: panel especifico para visualizar los miembros del equipos
                              (label "Teams members")
                              ))
 
-(define list_box_teams_members (new list-box%
+(define list_teams_members (new list-box%
                       (label "")
                       (parent (new horizontal-panel%
-                                   (parent pnl_teams_members)
+                                   (parent rigth_panel_dist)
                                    (style (list 'border))))
                       (choices (list ) )
                       (style (list 'single
@@ -704,18 +654,3 @@ UI: panel especifico para visualizar los voluntartios sin equipos
                              (parent panel_visual_voluuntrer)
                              (label "Volunteers without team")
                              ))
-
-
-
-
-
-(define list_box_members_without_team (new list-box%
-                      (label "")
-                      (parent (new horizontal-panel%
-                                   (parent pnl_volunteers_without_team)
-                                   (style (list 'border))))
-                      (choices (list ) )
-                      (style (list 'single
-                                   'column-headers))
-                      (columns (list  "Name" "Id" "Nationality" "Profession" "Languages"))))
-
