@@ -13,5 +13,15 @@
   	"name": "Costa Rica",
 	"description": "Description of place 3",
   	"language": [ "spanish"]
-  }
+  },
+  {
+	"name": "Canada",
+    "description": "Description of place 4",
+	"language": [ "french","spanish","germa"]
+  },
+  {
+	"name": "Nicaragua",
+   "description": "Description of place 5",
+	"language": [ "spanish","hebrew","portuguese"]
+}
 ]
