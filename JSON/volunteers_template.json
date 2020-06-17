@@ -54,5 +54,12 @@
 	"nationality": "french",
 	"profession": "dancer",
 	"language": [ "belarusian","spanish","english","hebrew"]
+  },
+  {
+	"name": "Ozuna Baby",
+	"id": "123456789",
+	"nationality": "italian",
+	"profession": "accountant",
+	"language": [ "portuguese"]
   }
 ]
