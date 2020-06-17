@@ -78,7 +78,6 @@ R: la entrada debe ser de tipo voluntario
     (set! volunteers_list (append volunteers_list (list volunteer)))
 )
 
-
 #|
 E: un objeto de tipo place(lugar de voluntariado)
 S: lista de places actualizada
@@ -146,23 +145,18 @@ R: las listas no puede ser vacia
         (define v_language_flag (existVolanguage volunteer_languages team));bandera de lenguajes
         (define profession_flag (existProfesion (get-field profession volunteer) team));bandera de profesion
         (define nationality_flag (existNationality (get-field nationality volunteer) team));bandera de nacionalidad
-        (displayln (get-field name volunteer))
-        (displayln language_flag)
-        (displayln (get-field name p_place))
         (cond [(and (equal? language_flag #t) (equal? profession_flag #t) (equal? nationality_flag #t) (equal? v_language_flag #t));verifica si cumple las restricciones
                (send team addVolunteer volunteer);añadir voluntario al equipo
                (set! volunteers_list (remove volunteer volunteers_list));eliminar voluntario de la lista
+               (displayln (get-field name volunteer))
                ]
            
       ))))
     (fixTeamList)
+    (displayln teams_list)
   )
 
-#|
-E: lista con los equipos distribuidos
-S: la lista de los equipos sin los lugares que no tienen miembros
-R: las listas no puede ser vacia
-|#
+
 (define (fixTeamList)
   (for-each (lambda (actual);recorrido de los equipos
               (define volunteers (get-field volunteers actual))
