@@ -228,9 +228,10 @@ R: No posee
   
   (define list (build-list (send list_box_lenguages get-number) values))
   (for ([i list])
-    (set! var_lista_idiomas (append (send list_box_lenguages get-string i) var_lista_idiomas))
+    (define sub_list_lang '((send list_box_lenguages get-string i)) )
+    (set! var_lista_idiomas (append sub_list_lang var_lista_idiomas))
+    (set! var_idiomas (string-append var_idiomas ","))
     (set! var_idiomas (string-append var_idiomas (send list_box_lenguages get-string i)))
-    (set! var_idiomas (string-append var_idiomas " , "))
     )
 
   
@@ -246,6 +247,7 @@ R: No posee
   (define (add_volunteers_to_list_aux)
     (define v1 (new volunteer% [name var_nombre] [id var_identificacionr] [nationality var_nacionalidad] [profession var_profesion] [languages var_lista_idiomas]))
     (addVolunteer v1)
+    (set! var_idiomas (substring var_idiomas 1))
     (send list_box_volunteers append "")
     (define index (- (send list_box_volunteers get-number) 1))
     (send list_box_volunteers set-string index var_nombre 0)
@@ -426,8 +428,9 @@ R: No posee
   (define var_list_idiomas '())
   (define list (build-list (send list_box_lenguages_places get-number) values))
   (for ([i list])
-    (set! var_list_idiomas (append (send list_box_lenguages_places get-string i) var_list_idiomas))
-    (set! var_idiomas (string-append var_idiomas " , "))
+    (define sub_list_lang '((send list_box_lenguages_places get-string i)) )
+    (set! var_list_idiomas (append sub_list_lang var_list_idiomas))
+    (set! var_idiomas (string-append var_idiomas ","))
     (set! var_idiomas (string-append var_idiomas (send list_box_lenguages_places get-string i)))
     
     )
@@ -443,7 +446,7 @@ R: No posee
     (define p1 (new places% [name var_nombre_lugar] [description var_descripcion_lugar] [languages var_list_idiomas]))
     (addPlace p1 )
     (send list_box_places append "")
-    (set! var_idiomas (substring var_idiomas 3))
+    (set! var_idiomas (substring var_idiomas 1))
     (define index (- (send list_box_places get-number) 1))
     (send list_box_places set-string index var_nombre_lugar 0)
     (send list_box_places set-string index var_descripcion_lugar 1)
