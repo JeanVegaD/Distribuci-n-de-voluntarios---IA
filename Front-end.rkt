@@ -687,8 +687,42 @@ UI: listbox para visualizar voluntarios
                       (choices (list ) )
                       (style (list 'single
                                    'column-headers))
-                      (columns (list  "Name" "Place" "Description" "Languages"))))
+                      (callback (lambda (list-box event)
+                                  (load_volunteers_from_team)))
+                      (columns (list  "Name" "Place" "Description" "Languages")))
+                      
+                         )
 
+
+(define (load_volunteers_from_team)
+  (define index (send list_box_teams get-selection))
+
+  (define (load_volunteers_from_team_aux)
+    (define team (list-ref teams_list (send list_box_teams get-selection)))
+    (define volu (get-field volunteers team))
+    (send list_box_teams_members clear)
+    (send list_box_teams_members append "")
+    (for ([v volu])
+      (define index (- (send list_box_teams_members get-number) 1))
+      (send list_box_teams_members set-string index (get-field name v) 0)
+      (send list_box_teams_members set-string index (get-field id v) 1)
+      (send list_box_teams_members set-string index (get-field nationality v) 2)
+      (send list_box_teams_members set-string index (get-field profession v) 3)
+      (send list_box_teams_members set-string index (string-join (get-field languages v) ",") 4)
+      
+     )
+
+      
+
+      
+   
+    
+   )
+
+  (cond [(integer? index)(load_volunteers_from_team_aux)])
+
+  
+ )
 
 
 
