@@ -137,31 +137,28 @@ S: una lista con los voluntarios que cumplen las condiciones, funcion auxiliar
 R: las listas no puede ser vacia
 |#
 (define (group)
-  (for ([p_place places_list]);recorrido de los lugares
-    (define place_languages (get-field languages p_place));obtener los lenguajes del lugar
     (for ([team teams_list])
+      (define p_place (get-field place team))
+      (define place_languages (get-field languages p_place));obtener los lenguajes del lugar
       (for ([volunteer volunteers_list]);recorrido de los voluntarios
         (define volunteer_languages (get-field languages volunteer));obtener los lenguajes del voluntario
         (define language_flag (existLanguage place_languages volunteer_languages));bandera de lenguajes
         (define v_language_flag (existVolanguage volunteer_languages team));bandera de lenguajes
         (define profession_flag (existProfesion (get-field profession volunteer) team));bandera de profesion
         (define nationality_flag (existNationality (get-field nationality volunteer) team));bandera de nacionalidad
-        (displayln (get-field name volunteer))
-        (displayln language_flag)
-        (displayln (get-field name p_place))
         (cond [(and (equal? language_flag #t) (equal? profession_flag #t) (equal? nationality_flag #t) (equal? v_language_flag #t));verifica si cumple las restricciones
                (send team addVolunteer volunteer);añadir voluntario al equipo
                (set! volunteers_list (remove volunteer volunteers_list));eliminar voluntario de la lista
                ]
            
-      ))))
+      )))
     (fixTeamList)
   )
 
 #|
 E: lista con los equipos distribuidos
-S: la lista de los equipos sin los lugares que no tienen miembros
-R: las listas no puede ser vacia
+S: eliminacion de equipos que no tienen miembros
+R: las listas no puede ser vacias
 |#
 (define (fixTeamList)
   (for-each (lambda (actual);recorrido de los equipos
@@ -169,19 +166,30 @@ R: las listas no puede ser vacia
               (cond [(empty? volunteers)
                      (set! teams_list (remove actual teams_list))])
               )teams_list
-    ))
+    )
+  (existTranslator)
+  )
+
+#|
+E: lista de los traductores y la lista de los equipos distribuidos
+S: añade a los traductores que sobran en el equipo que encaje por los lenguajes
+R: las listas no puede ser vacia
+|#
+(define (existTranslator)
+  (cond [(not(empty? translator_list))
+         (for-each (lambda (team);recorrido de los equipos
+              (for-each (lambda (translator)
+                          (define trans_languages (get-field languages translator))
+                          (define language_flag (existVolanguage trans_languages team));bandera de lenguajes     
+                          (cond [(equal? language_flag #t)
+                                 (send team addVolunteer translator);añadir voluntario al equipo
+                                 (set! translator_list (remove translator translator_list))
+                                 ]))
+                        translator_list)
+              )teams_list
+    )]))
 
 
-(define (trackTeams)
-  (for-each (lambda (actual);recorrido de los equipos
-              (define team_place (get-field name (get-field place actual)))
-              (define team_volunteers (get-field volunteers actual))
-              (define name (get-field name actual))
-              (displayln name)
-              (displayln team_place)
-              (for ([volunteer team_volunteers])
-                (displayln (get-field name volunteer))
-                )(displayln "----\n"))teams_list))
 
 
 #|
