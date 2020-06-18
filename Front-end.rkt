@@ -551,7 +551,11 @@ UI: boton para distirbuir los voluntarios
     (searchTranslators)
     (addTranslator)
     (group)
-   )
+    (display_distribution)
+    (send frame_principal show #f)
+    (send frame_distirbucion show #t)
+    )
+
 
   (if (and rest1 rest2)(distribuir_voluntarios_aux)
       (message-box "Error" 	
@@ -609,7 +613,20 @@ UI:frame distribucion
                    [width 800]
                    [height 600]))
 
-(send frame_distirbucion show #f)
+
+(define (display_distribution)
+  (for ([team teams_list])
+    ;se agrega a la interfaz
+    (send list_box_teams append "")
+    (define index (- (send list_box_teams get-number) 1))
+    (send list_box_teams set-string index (get-field name team) 0)
+    (send list_box_teams set-string index (get-field name (get-field place team)) 1)
+    (send list_box_teams set-string index (get-field description (get-field place team)) 2)
+    (send list_box_teams set-string index (string-join (get-field languages (get-field place team)) ",") 3)
+    )
+  
+  )
+
 
 #|
 UI:panel vertical que muestra los voluntarios
