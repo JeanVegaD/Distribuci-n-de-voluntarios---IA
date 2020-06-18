@@ -624,9 +624,25 @@ UI:frame distribucion
     (send list_box_teams set-string index (get-field name (get-field place team)) 1)
     (send list_box_teams set-string index (get-field description (get-field place team)) 2)
     (send list_box_teams set-string index (string-join (get-field languages (get-field place team)) ",") 3)
-    )
+   )
+
+
+  (for ([volunteer volunteers_list])
+    ;se agrega a la interfaz
+    (send list_box_members_without_team append "")
+    (define index (- (send list_box_members_without_team get-number) 1))
+    (send list_box_members_without_team set-string index (get-field name volunteer) 0)
+    (send list_box_members_without_team set-string index (get-field id volunteer) 1)
+    (send list_box_members_without_team set-string index (get-field nationality volunteer) 2)
+    (send list_box_members_without_team set-string index (get-field profession volunteer) 3)
+    (send list_box_members_without_team set-string index (string-join (get-field languages volunteer) ",") 4)
+   )
+
+
   
   )
+
+
 
 
 #|
