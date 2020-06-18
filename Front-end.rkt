@@ -228,8 +228,7 @@ R: No posee
   
   (define list (build-list (send list_box_lenguages get-number) values))
   (for ([i list])
-    (define sub_list_lang '((send list_box_lenguages get-string i)) )
-    (set! var_lista_idiomas (append sub_list_lang var_lista_idiomas))
+    (set! var_lista_idiomas (append (string-split (send list_box_lenguages get-string i)) var_lista_idiomas))
     (set! var_idiomas (string-append var_idiomas ","))
     (set! var_idiomas (string-append var_idiomas (send list_box_lenguages get-string i)))
     )
@@ -427,9 +426,10 @@ R: No posee
   (define var_idiomas "")
   (define var_list_idiomas '())
   (define list (build-list (send list_box_lenguages_places get-number) values))
+  
   (for ([i list])
-    (define sub_list_lang '((send list_box_lenguages_places get-string i)) )
-    (set! var_list_idiomas (append sub_list_lang var_list_idiomas))
+    (define sub_list_lang (string-split (send list_box_lenguages_places get-string i)) )
+    (set! var_list_idiomas (append  sub_list_lang var_list_idiomas))
     (set! var_idiomas (string-append var_idiomas ","))
     (set! var_idiomas (string-append var_idiomas (send list_box_lenguages_places get-string i)))
     
@@ -503,8 +503,6 @@ UI: boton de agregar conjunto de lugares a traves de un JSON
    
     )
 )
-
-
 
 
 
