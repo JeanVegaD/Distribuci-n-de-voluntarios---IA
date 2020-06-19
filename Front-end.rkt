@@ -254,6 +254,10 @@ R: No posee
     (send list_box_volunteers set-string index var_nacionalidad 2)
     (send list_box_volunteers set-string index var_profesion 3)
     (send list_box_volunteers set-string index var_idiomas 4)
+    ;limpia los valores
+    (send txt_nombre set-value "")
+    (send txt_id set-value "")
+    (send list_box_lenguages clear)
     
   )
   
@@ -451,6 +455,11 @@ R: No posee
     (send list_box_places set-string index var_nombre_lugar 0)
     (send list_box_places set-string index var_descripcion_lugar 1)
     (send list_box_places set-string index var_idiomas 2)
+
+    ;limpia los valores
+    (send txt_nombre_lugar set-value "")
+    (send txt_descripcion_lugar set-value "")
+    (send list_box_lenguages_places clear)
   )
 
   
@@ -474,6 +483,11 @@ UI: boton de agregar conjunto de lugares a traves de un JSON
                     (callback (lambda (b e)(load_places_from_json)))
                     ))
 
+#|
+E: Carga un json a traves de un explorador de archivos
+S: Incluye el json obtenido en objetos en instancias del tipo place
+R: No posee
+|#
 (define (load_places_from_json)
 
   (define path (get-file))
@@ -543,6 +557,11 @@ UI: boton para distirbuir los voluntarios
                     ))
 
 
+#|
+E: Listas de lugares y voluntatios 
+S: Crea y distribuye los equipos de acuerdo a las condiciones 
+R: No posee
+|#
 (define (distribuir_voluntarios)
 
   (define rest1 (> (send list_box_places get-number) 0))
@@ -615,6 +634,12 @@ UI:frame distribucion
                    [height 600]))
 
 
+
+#|
+E: Datos obtenidos de la distribucion
+S: Muestra de forma grafico los datos obtenidos de la distribucion 
+R: No posee
+|#
 (define (display_distribution)
   (for ([team teams_list])
     ;se agrega a la interfaz
@@ -693,7 +718,11 @@ UI: listbox para visualizar voluntarios
                       
                          )
 
-
+#|
+E: obtiene la selecicion del listbox 
+S: Muestra los voluntartios del equipo seleccionado
+R: No posee
+|#
 (define (load_volunteers_from_team)
   (define index (send list_box_teams get-selection))
 
@@ -725,7 +754,9 @@ UI: listbox para visualizar voluntarios
  )
 
 
-
+#|
+UI: panel especifico para acomdar la distribucion de los paneles 
+|#
 (define rigth_panel_dist (new horizontal-panel%
                      (parent panel_visual_team)
                      (vert-margin 5)
@@ -745,6 +776,10 @@ UI: panel especifico para visualizar los miembros del equipos
                              (label "Teams members")
                              ))
 
+
+#|
+UI: listbox que muestra los miembros de un equipo
+|#
 (define list_box_teams_members (new list-box%
                       (label "")
                       (parent (new horizontal-panel%
@@ -756,8 +791,10 @@ UI: panel especifico para visualizar los miembros del equipos
                       (columns (list  "Name" "Id" "Nationality" "Profession" "Languages"))))
 
 
-
-(define panel_visual_voluuntrer (new horizontal-panel%
+#|
+UI: panel para acomdar la verticalmente los paneles
+|#
+(define panel_visual_voluuntrer (new vertical-panel%
                      (parent frame_distirbucion)
                      (vert-margin 2)
                      ;(horiz-margin 5)
@@ -776,7 +813,9 @@ UI: panel especifico para visualizar los voluntartios sin equipos
 
 
 
-
+#|
+UI: Listbox para visualizar los voluntartios sin equipos
+|#
 (define list_box_members_without_team (new list-box%
                       (label "")
                       (parent (new horizontal-panel%
@@ -786,4 +825,53 @@ UI: panel especifico para visualizar los voluntartios sin equipos
                       (style (list 'single
                                    'column-headers))
                       (columns (list  "Name" "Id" "Nationality" "Profession" "Languages"))))
+
+#|
+UI: boton para volver a la ventana principal
+|#
+(define btn_back_to_main (new button%
+                    (parent panel_visual_voluuntrer)
+                    (label "Back to home screen")
+                    (min-height 50)
+                    (stretchable-height #f)
+                    (stretchable-width #t)
+                    (callback (lambda (b e)(back_to_main)))
+                    ))
+
+
+
+#|
+E: No recibe
+S: Limpia todos los datos y se regresa a la funcion principal para realizar una nueva distribucion 
+R: No posee
+|#
+(define (back_to_main)
+  ;limpia las listas correspondientes
+  (clearLists)
+
+  ;limpia los campos de agregar voluntario
+  (send txt_nombre set-value "")
+  (send txt_id set-value "")
+  (send list_box_lenguages clear)
+
+  ;limpia los campos de agregar lugar
+  (send txt_nombre_lugar set-value "")
+  (send txt_descripcion_lugar set-value "")
+  (send list_box_lenguages_places clear)
+
+  ;limpia los campos visualizacion de voluntarios y lugares
+  (send list_box_volunteers clear)
+  (send list_box_places clear)
+
+  ;limpia los campos de la visualizacion de la distribucion
+  (send list_box_teams clear)
+  (send list_box_teams_members clear)
+  (send list_box_members_without_team clear)
+
+  ;muestra las ventanas respectivas
+  (send frame_principal show #t)
+  (send frame_distirbucion show #f)
+
+  
+  )
 
