@@ -78,16 +78,7 @@ R: la entrada debe ser de tipo voluntario
     (set! volunteers_list (append volunteers_list (list volunteer)))
 )
 
-#|
-E: lista de voluntarios, lugares, equipos y traductores
-S: las listas reinicializadas
-R: 
-|#
-(define (clearLists)
-  (set! volunteers_list null)
-  (set! translator_list null)
-  (set! places_list null)
-  (set! teams_list null))
+
 
 #|
 E: un objeto de tipo place(lugar de voluntariado)
@@ -97,6 +88,18 @@ R: la entrada debe ser de tipo place
 (define (addPlace place)
     (set! places_list (append places_list (list place)))
 )
+
+
+#|
+E: las listas goblales, voluntarios, lugares, equipos y traductores
+S: las listas reinicializadas
+R: 
+|#
+(define (clearLists)
+  (set! volunteers_list null)
+  (set! translator_list null)
+  (set! places_list null)
+  (set! teams_list null))
 
 
 #|
@@ -279,5 +282,21 @@ R: las listas no puede ser vacia
     
   )
 
+
+#|
+E: recibe la nacionalidad de un voluntario
+S: valor #t o #f si exite un voluntario con esa nacionalidad en el equipo 
+R: las listas no puede ser vacia
+|#
+
+(define (existId id)
+  (let ([flag #f])
+    (for-each (lambda (element)
+                (define volunteer_id (get-field id element))
+                (cond [(equal? id volunteer_id) (set! flag #t)];se setea la bandera verdader si existe alguien con el mismo id
+                      )
+              ) volunteers_list)
+   flag)
+ )
 
 (provide (all-defined-out))
