@@ -15,8 +15,8 @@ R: los lenguajes se presentan en una lista
      S: lista de lenguajes actualizada
      R: 
      |#
-     (define/public (addLanguage language)
-       (set! languages (append languages (list language))))
+     (define/public (addLanguage param_language)
+       (set! languages (append languages (list param_language))))
 ))
 
 #|
@@ -34,9 +34,8 @@ R: los lenguajes se presentan en una lista
     S: lista de lenguajes actualizada
     R: 
     |#
-    (define/public (addLanguage language)
-       (set! languages (append languages language)))
-    (define/public (getName) (name))
+    (define/public (addLanguage param_language)
+       (set! languages (append languages param_language)))
 ))
 
 #|
@@ -54,8 +53,8 @@ R: los atributos deben ser los objetos respectivos
     S: lista de los voluntarios en el equipo actualizada
     R: 
     |#
-    (define/public (addVolunteer volunteer)
-       (set! volunteers (append volunteers (list volunteer))))
+    (define/public (addVolunteer param_volunteer)
+       (set! volunteers (append volunteers (list param_volunteer))))
 ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -123,12 +122,12 @@ S: una lista con los voluntarios con profesion de traductor
 R: la lista no puede ser vacia
 |#
 (define (searchTranslators)
-    (for ([volunteer volunteers_list])
-      (define mate (get-field profession volunteer))
+    (for ([v_volunteer volunteers_list])
+      (define v_profession (get-field profession v_volunteer))
       (cond
-        [( equal? mate "translator");verifica si su profesion es de traductor
-        (set! translator_list (append translator_list (list volunteer)));se añade a la lista de traductores
-        (set! volunteers_list (remove volunteer volunteers_list))]);se elimina de la lista de voluntarios
+        [( equal? v_profession "translator");verifica si su profesion es de traductor
+        (set! translator_list (append translator_list (list v_volunteer)));se añade a la lista de traductores
+        (set! volunteers_list (remove v_volunteer volunteers_list))]);se elimina de la lista de voluntarios
      )
 
 )
@@ -139,22 +138,22 @@ S: una lista con los equipos creados por lugar, con cada traductor añadido seg�
 R: la lista no puede ser vacia
 |#
 (define (addTranslator)
-  (define counter 0)
+  (define v_counter 0)
   (for ([p_place places_list])
-    (set! counter (+ counter 1))
-    (define number (number->string counter))
-    (define team (new %teams [name (string-append "Team " number)] [place p_place]));creacion de nuevo equipo
+    (set! v_counter (+ v_counter 1))
+    (define v_number (number->string v_counter))
+    (define v_team (new %teams [name (string-append "Team " v_number)] [place p_place]));creacion de nuevo equipo
     (define place_languages (get-field languages p_place));obtener los lenguajes del lugar
     (for ([translator translator_list])
       (define translator_languages (get-field languages translator));obtener los lenguajes del voluntario
       (define language_flag (existLanguage place_languages translator_languages));bandera de lenguajes
-      (define profession_flag (existProfesion (get-field profession translator) team));bandera de profesion
+      (define profession_flag (existProfesion (get-field profession translator) v_team));bandera de profesion
       (cond [(and (equal? language_flag #t) (equal? profession_flag #t))
-             (send team addVolunteer translator);añadir traductor al equipo
+             (send v_team addVolunteer translator);añadir traductor al equipo
              (send p_place addLanguage translator_languages)
              (set! translator_list (remove translator translator_list));eliminar traductor de la lista
              ]))
-    (set! teams_list (append teams_list (list team) )));agrega nuevo equipo a la lista
+    (set! teams_list (append teams_list (list v_team) )));agrega nuevo equipo a la lista
   )
 
 
@@ -165,17 +164,17 @@ S: una lista con los voluntarios que cumplen las condiciones, funcion auxiliar
 R: las listas no puede ser vacia
 |#
 (define (group)
-    (for ([team teams_list])
-      (define p_place (get-field place team))
+    (for ([t_team teams_list])
+      (define p_place (get-field place t_team))
       (define place_languages (get-field languages p_place));obtener los lenguajes del lugar
       (for ([volunteer volunteers_list]);recorrido de los voluntarios
         (define volunteer_languages (get-field languages volunteer));obtener los lenguajes del voluntario
         (define language_flag (existLanguage place_languages volunteer_languages));bandera de lenguajes
-        (define v_language_flag (existVolanguage volunteer_languages team));bandera de lenguajes
-        (define profession_flag (existProfesion (get-field profession volunteer) team));bandera de profesion
-        (define nationality_flag (existNationality (get-field nationality volunteer) team));bandera de nacionalidad
+        (define v_language_flag (existVolanguage volunteer_languages t_team));bandera de lenguajes
+        (define profession_flag (existProfesion (get-field profession volunteer) t_team));bandera de profesion
+        (define nationality_flag (existNationality (get-field nationality volunteer) t_team));bandera de nacionalidad
         (cond [(and (equal? language_flag #t) (equal? profession_flag #t) (equal? nationality_flag #t) (equal? v_language_flag #t));verifica si cumple las restricciones
-               (send team addVolunteer volunteer);añadir voluntario al equipo
+               (send t_team addVolunteer volunteer);añadir voluntario al equipo
                (set! volunteers_list (remove volunteer volunteers_list));eliminar voluntario de la lista
                ]
            
@@ -189,10 +188,10 @@ S: eliminacion de equipos que no tienen miembros
 R: las listas no puede ser vacias
 |#
 (define (fixTeamList)
-  (for-each (lambda (actual);recorrido de los equipos
-              (define volunteers (get-field volunteers actual))
-              (cond [(empty? volunteers)
-                     (set! teams_list (remove actual teams_list))])
+  (for-each (lambda (t_actual);recorrido de los equipos
+              (define l_volunteers (get-field volunteers t_actual))
+              (cond [(empty? l_volunteers)
+                     (set! teams_list (remove t_actual teams_list))])
               )teams_list
     )
   (existTranslator)
@@ -205,13 +204,13 @@ R: las listas no puede ser vacia
 |#
 (define (existTranslator)
   (cond [(not(empty? translator_list))
-         (for-each (lambda (team);recorrido de los equipos
-              (for-each (lambda (translator)
-                          (define trans_languages (get-field languages translator))
-                          (define language_flag (existVolanguage trans_languages team));bandera de lenguajes     
+         (for-each (lambda (t_team);recorrido de los equipos
+              (for-each (lambda (t_translator)
+                          (define trans_languages (get-field languages t_translator))
+                          (define language_flag (existVolanguage trans_languages t_team));bandera de lenguajes     
                           (cond [(equal? language_flag #t)
-                                 (send team addVolunteer translator);añadir voluntario al equipo
-                                 (set! translator_list (remove translator translator_list))
+                                 (send t_team addVolunteer t_translator);añadir voluntario al equipo
+                                 (set! translator_list (remove t_translator translator_list))
                                  ]))
                         translator_list)
               )teams_list
@@ -226,12 +225,12 @@ S: verdadero si coinciden lenguajes del lugar con lenguajes del voluntario, fals
 R: las listas no puede ser vacia
 |#
 (define (existLanguage param_v_languages param_p_languages)
-  (let ([flag #f])
-    (for-each (lambda (element);recorrido de la lista de lenguajes del lugar
-                 (cond [ (equal? (findf (lambda (lang) (equal? element lang) ) param_p_languages) #f)];verifica si un elemento de la lista de lenguajes pertenece a la otra
-                       [else (set! flag #t)]))
+  (let ([v_flag #f])
+    (for-each (lambda (v_language);recorrido de la lista de lenguajes del lugar
+                 (cond [ (equal? (findf (lambda (p_language) (equal? v_language p_language) ) param_p_languages) #f)];verifica si un elemento de la lista de lenguajes pertenece a la otra
+                       [else (set! v_flag #t)]))
     param_v_languages)
-  (cond [(equal? flag #f) #f];devuelve falso en caso de que no haya encontrado algun lenguaje
+  (cond [(equal? v_flag #f) #f];devuelve falso en caso de que no haya encontrado algun lenguaje
         [else #t]);devuelve verdadero en caso de que haya encontrado alguno
   ))
 
@@ -241,16 +240,16 @@ S: verdadero si coinciden los lenguajes del voluntario con los que pertenecen al
 R: las listas no puede ser vacia
 |#
 (define (existVolanguage param_v_languages param_actual_team)
-  (let ([flag #t])
-   (define actual (get-field volunteers param_actual_team))
-    (cond [(not (empty? actual))
-           (for-each (lambda (element);recorrido de los voluntarios
-          (define actual_languages (get-field languages element));obtiene los lenguajes del voluntario actual
-           (set! flag (existLanguage actual_languages param_v_languages));cambia el estado de la bandera en caso de que un caso no se cumpla
-              ) actual)]
+  (let ([v_flag #t])
+   (define v_actual (get-field volunteers param_actual_team))
+    (cond [(not (empty? v_actual))
+           (for-each (lambda (v_volunteers);recorrido de los voluntarios
+          (define actual_languages (get-field languages v_volunteers));obtiene los lenguajes del voluntario actual
+           (set! v_flag (existLanguage actual_languages param_v_languages));cambia el estado de la bandera en caso de que un caso no se cumpla
+              ) v_actual)]
           [else #t])
   
-    flag;retorno del resultado de la bandera
+    v_flag;retorno del resultado de la bandera
     )
   )
 
@@ -261,17 +260,17 @@ S: una lista con los voluntarios con agrupados
 R: las listas no puede ser vacia
 |#
 (define (existProfesion param_profession param_actual_team)
-  (let ([flag #t])
-   (define actual (get-field volunteers param_actual_team))
-    (cond [(not (empty? actual))
-           (for-each (lambda (element)
-          (define prof (get-field profession element))
-        (cond [(equal? prof param_profession) (set! flag #f)];se setea la bandera falso porque no cumple la restriccion
+  (let ([v_flag #t])
+   (define v_actual (get-field volunteers param_actual_team))
+    (cond [(not (empty? v_actual))
+           (for-each (lambda (v_volunteers)
+          (define v_profession (get-field profession v_volunteers))
+        (cond [(equal? v_profession param_profession) (set! v_flag #f)];se setea la bandera falso porque no cumple la restriccion
         )
-              ) actual)]
+              ) v_actual)]
           [else #t])
   
-    flag
+    v_flag
     )
     
   )
@@ -282,17 +281,17 @@ S: valor #t o #f si exite un voluntario con esa nacionalidad en el equipo
 R: las listas no puede ser vacia
 |#
 (define (existNationality param_nationality actual_team)
-  (let ([flag #t])
-    (define actual (get-field volunteers actual_team))
-    (cond [(not (empty? actual))
-  (for-each (lambda (element)
-          (define nat (get-field nationality element))
-        (cond [(equal? nat param_nationality) (set! flag #f)];se setea la bandera falso porque no cumple la restriccion
-              [else (set! flag #t)];se setea la bandera verdadero porque cumple la restriccion no existe alguien de la misma profesion en el equipo
+  (let ([v_flag #t])
+    (define v_actual (get-field volunteers actual_team))
+    (cond [(not (empty? v_actual))
+  (for-each (lambda (v_volunteers)
+          (define v_nationality (get-field nationality v_volunteers))
+        (cond [(equal? v_nationality param_nationality) (set! v_flag #f)];se setea la bandera falso porque no cumple la restriccion
+              [else (set! v_flag #t)];se setea la bandera verdadero porque cumple la restriccion no existe alguien de la misma profesion en el equipo
         )
-              ) actual)]
+              ) v_actual)]
           [else #t])
-    flag
+    v_flag
     )
     
   )
@@ -305,13 +304,13 @@ R: las listas no puede ser vacia
 |#
 
 (define (existId param_id)
-  (let ([flag #f])
-    (for-each (lambda (element)
-                (define volunteer_id (get-field id element))
-                (cond [(equal? param_id volunteer_id) (set! flag #t)];se setea la bandera verdader si existe alguien con el mismo id
+  (let ([v_flag #f])
+    (for-each (lambda (v_volunteer)
+                (define volunteer_id (get-field id v_volunteer))
+                (cond [(equal? param_id volunteer_id) (set! v_flag #t)];se setea la bandera verdader si existe alguien con el mismo id
                       )
               ) volunteers_list)
-   flag)
+   v_flag)
  )
 
 (provide (all-defined-out))
