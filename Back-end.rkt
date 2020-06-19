@@ -78,6 +78,16 @@ R: la entrada debe ser de tipo voluntario
     (set! volunteers_list (append volunteers_list (list volunteer)))
 )
 
+#|
+E: las listas goblales, voluntarios, lugares, equipos y traductores
+S: las listas reinicializadas
+R: 
+|#
+(define (clearLists)
+  (set! volunteers_list null)
+  (set! translator_list null)
+  (set! places_list null)
+  (set! teams_list null))
 
 #|
 E: un objeto de tipo place(lugar de voluntariado)
