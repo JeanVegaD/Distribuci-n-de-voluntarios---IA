@@ -79,7 +79,7 @@ R: la entrada debe ser de tipo voluntario
 )
 
 #|
-E: las listas goblales, voluntarios, lugares, equipos y traductores
+E: lista de voluntarios, lugares, equipos y traductores
 S: las listas reinicializadas
 R: 
 |#
