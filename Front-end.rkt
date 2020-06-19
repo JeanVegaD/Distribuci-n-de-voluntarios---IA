@@ -831,7 +831,7 @@ UI: boton para volver a la ventana principal
 |#
 (define btn_back_to_main (new button%
                     (parent panel_visual_voluuntrer)
-                    (label "Distribute volunteers")
+                    (label "Back to home screen")
                     (min-height 50)
                     (stretchable-height #f)
                     (stretchable-width #t)
@@ -847,7 +847,7 @@ R: No posee
 |#
 (define (back_to_main)
   ;limpia las listas correspondientes
-  ;(clearLists)
+  (clearLists)
 
   ;limpia los campos de agregar voluntario
   (send txt_nombre set-value "")
