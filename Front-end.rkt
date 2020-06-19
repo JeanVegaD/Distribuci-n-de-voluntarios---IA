@@ -607,7 +607,31 @@ UI: listbox para visualizar voluntarios
                       (choices (list ) )
                       (style (list 'single
                                    'column-headers))
+                      (callback (lambda (list-box event)
+                                  (delete_volunteer_from_list)))
                       (columns (list  "Name" "Id" "Nationality" "Profession" "Languages"))))
+
+
+#|
+E: Obtiene el index de la seleccion de voluntarios
+S: Elimina el objeto de seleccionado 
+R: No posee
+|#
+(define (delete_volunteer_from_list)
+  (define index (send list_box_volunteers get-selection))
+
+  (define (delete_volunteer_from_list_aux)
+    (display (send list_box_volunteers get-string))
+    (send list_box_volunteers delete index)
+    
+    )
+  
+  (cond [(integer? index)(delete_volunteer_from_list_aux)])
+
+  )
+
+
+
 
 #|
 UI: listbox para visualizar lugares
@@ -620,9 +644,27 @@ UI: listbox para visualizar lugares
                       (choices (list ))
                       (style (list 'single
                                    'column-headers))
+                      (callback (lambda (list-box event)
+                                  (delete_place_from_list)))
                       (columns (list  "Name" "Description" "Languages"))))
 
 
+
+#|
+E: Obtiene el index de la seleccion de lugares
+S: Elimina el objeto de seleccionado 
+R: No posee
+|#
+(define (delete_place_from_list)
+  (define index (send list_box_places get-selection))
+
+  (define (delete_places_from_list_aux)
+    (send list_box_places delete index)
+    )
+  
+  (cond [(integer? index)(delete_places_from_list_aux)])
+
+  )
 
 
 
@@ -750,12 +792,6 @@ R: No posee
       (send list_box_teams_members set-string index (string-join (get-field languages v) ",") 4)
       
      )
-
-      
-
-      
-   
-    
    )
 
   (cond [(integer? index)(load_volunteers_from_team_aux)])
