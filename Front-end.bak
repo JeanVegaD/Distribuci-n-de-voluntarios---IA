@@ -621,7 +621,7 @@ R: No posee
   (define index (send list_box_volunteers get-selection))
 
   (define (delete_volunteer_from_list_aux)
-    (deleteVolunteer  (list-ref volunteers_list index))
+    (display (send list_box_volunteers get-string))
     (send list_box_volunteers delete index)
     
     )
@@ -658,8 +658,7 @@ R: No posee
 (define (delete_place_from_list)
   (define index (send list_box_places get-selection))
 
-  (define (delete_places_from_list_aux)    
-    (deletePlace (list-ref places_list index))
+  (define (delete_places_from_list_aux)
     (send list_box_places delete index)
     )
   
