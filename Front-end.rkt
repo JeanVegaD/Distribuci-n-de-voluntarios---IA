@@ -241,6 +241,10 @@ R: No posee
   (define rest3 (not(equal? var_nacionalidad "")))
   (define rest4 (not(equal? var_profesion "")))
   (define rest5 (not(equal? var_idiomas "")))
+  (define rest6 (not(existId var_identificacionr)))
+  (define rest7 (and (equal? var_profesion "translator") (>= (length var_lista_idiomas) 2)))
+  (define rest8 (not (equal? var_profesion "translator")))
+  (define rest9 (or rest7 rest8))
 
   
   (define (add_volunteers_to_list_aux)
@@ -260,11 +264,31 @@ R: No posee
     (send list_box_lenguages clear)
     
   )
-  
-  (if (and rest1 rest2 rest3 rest4 rest5)(add_volunteers_to_list_aux) (message-box "Error" 	
+
+  (if (and rest1 rest2 rest3 rest4 rest5)(if rest6 (if rest9 (add_volunteers_to_list_aux)(message-box "Error" 	
+ 	 	"The translator must have 2 or more languagess"	 
+ 	 	frame_principal	 
+ 	))(message-box "Error" 	
+ 	 	"This ID already exists"	 
+ 	 	frame_principal	 
+ 	)) (message-box "Error" 	
  	 	"Complete all fields"	 
  	 	frame_principal	 
- 	)) 
+ 	))
+
+  #|(define (add_volunteers_valdiation_aux_)
+    (if (rest6)(add_volunteers_to_list_aux) (message-box "Error" 	
+ 	 	"This ID already exists"	 
+ 	 	frame_principal	 
+ 	))
+    )|#
+  
+  #|(if (and rest1 rest2 rest3 rest4 rest5)(add_volunteers_to_list_aux) (message-box "Error" 	
+ 	 	"Complete all fields"	 
+ 	 	frame_principal	 
+ 	))
+
+  |#
 )
 
 
