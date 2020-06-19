@@ -275,20 +275,6 @@ R: No posee
  	 	"Complete all fields"	 
  	 	frame_principal	 
  	))
-
-  #|(define (add_volunteers_valdiation_aux_)
-    (if (rest6)(add_volunteers_to_list_aux) (message-box "Error" 	
- 	 	"This ID already exists"	 
- 	 	frame_principal	 
- 	))
-    )|#
-  
-  #|(if (and rest1 rest2 rest3 rest4 rest5)(add_volunteers_to_list_aux) (message-box "Error" 	
- 	 	"Complete all fields"	 
- 	 	frame_principal	 
- 	))
-
-  |#
 )
 
 
